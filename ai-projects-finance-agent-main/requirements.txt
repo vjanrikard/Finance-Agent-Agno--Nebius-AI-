@@ -1,0 +1,5 @@
+agno
+opena
+python-dotenv
+gradio
+
