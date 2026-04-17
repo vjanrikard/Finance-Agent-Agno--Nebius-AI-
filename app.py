@@ -7,8 +7,16 @@ from agno.tools.yfinance import YFinanceTools
 from agno.tools.duckduckgo import DuckDuckGoTools
 import gradio as gr
 
-# Load environment variables from secure location outside project
-load_dotenv(Path.home() / "OneDrive" / "Secrets" / "NEBIUS_API_KEY.env")
+def load_nebius_env() -> None:
+    env_file = os.getenv("NEBIUS_API_KEY.env_FILE") or os.getenv("NEBIUS_API_KEY_ENV_FILE")
+    if env_file:
+        load_dotenv(env_file)
+        return
+
+    load_dotenv(Path.home() / "OneDrive" / "Secrets" / "NEBIUS_API_KEY.env")
+
+
+load_nebius_env()
 
 # Create the AI finance agent
 agent = Agent(

@@ -53,11 +53,58 @@ New-Item -ItemType Directory -Force "$HOME\OneDrive\Secrets"
 Set-Content -Path "$HOME\OneDrive\Secrets\NEBIUS_API_KEY.env" -Value "NEBIUS_API_KEY=your_nebius_api_key_here"
 ```
 
-The app loads the key from:
+By default, the app loads the key from:
 
 ```text
 C:\Users\<your-user>\OneDrive\Secrets\NEBIUS_API_KEY.env
 ```
+
+You can override that path per shell session:
+
+```powershell
+$env:NEBIUS_API_KEY_ENV_FILE = "C:\Users\vevan\OneDrive\Secrets\NEBIUS_API_KEY.env"
+python app.py
+```
+
+The loaders also accept `$env:NEBIUS_API_KEY.env_FILE`, but `NEBIUS_API_KEY_ENV_FILE` is easier to work with in PowerShell.
+
+## Nebius API Setup Process
+
+1. Create a Nebius API key in Nebius AI Studio.
+1. Save the key in an env file as a single line:
+
+```text
+NEBIUS_API_KEY=your_nebius_api_key_here
+```
+
+1. Put that file at the default path:
+
+```text
+C:\Users\<your-user>\OneDrive\Secrets\NEBIUS_API_KEY.env
+```
+
+1. If your env file lives somewhere else, point PowerShell to it:
+
+```powershell
+$env:NEBIUS_API_KEY_ENV_FILE = "C:\Users\vevan\OneDrive\Secrets\NEBIUS_API_KEY.env"
+```
+
+1. Start the app with `python app.py` or `python main.py "your question"`.
+
+At runtime, the app uses this lookup order:
+
+1. `NEBIUS_API_KEY.env_FILE`
+2. `NEBIUS_API_KEY_ENV_FILE`
+3. `C:\Users\<your-user>\OneDrive\Secrets\NEBIUS_API_KEY.env`
+
+After the env file is loaded, the code reads `NEBIUS_API_KEY` from that file and passes it to the Nebius model client.
+
+If the key is not being picked up, verify these points:
+
+- The env file exists at the path you expect.
+- The file contains `NEBIUS_API_KEY=...` with no extra quotes required.
+- The current PowerShell session has `NEBIUS_API_KEY_ENV_FILE` set if you are not using the default path.
+- You started a new terminal, or reloaded your PowerShell profile after changing it.
 
 **3) Run the web app**
 ```bash

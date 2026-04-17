@@ -1,5 +1,5 @@
 agno
-opena
+openai>=1.52.0,<2.0.0
 python-dotenv
 gradio
 
