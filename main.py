@@ -1,13 +1,14 @@
 # import necessary python libraries
+import sys
 from agno.agent import Agent
 from agno.models.nebius import Nebius
 from agno.tools.yfinance import YFinanceTools
 from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.playground import Playground, serve_playground_app
 import os
+from pathlib import Path
 from dotenv import load_dotenv
-# load environment variables
-load_dotenv()
+# Load environment variables from secure location outside project
+load_dotenv(Path.home() / "OneDrive" / "Secrets" / "NEBIUS_API_KEY.env")
 # create the AI finance agent
 agent = Agent(
     name="xAI Finance Agent",
@@ -15,14 +16,34 @@ agent = Agent(
             id="meta-llama/Llama-3.3-70B-Instruct",
             api_key=os.getenv("NEBIUS_API_KEY")
     ),
-    tools=[DuckDuckGoTools(), YFinanceTools(stock_price=True, analyst_recommendations=True, stock_fundamentals=True)],
+    tools=[
+        DuckDuckGoTools(),
+        YFinanceTools(
+            enable_stock_price=True,
+            enable_analyst_recommendations=True,
+            enable_stock_fundamentals=True,
+        ),
+    ],
     instructions = ["Always use tables to display financial/numerical data. For text data use bullet points and small paragrpahs."],
-    show_tool_calls = True,
     markdown = True,
     )
 
-# UI for finance agent
-app = Playground(agents=[agent]).get_app()
+def main() -> int:
+    user_query = " ".join(sys.argv[1:]).strip()
+    if not user_query:
+        user_query = input("Ask a finance question: ").strip()
+
+    if not user_query:
+        print("No question provided.")
+        return 1
+
+    try:
+        response = agent.run(user_query)
+        print(response.content)
+        return 0
+    except Exception as exc:
+        print(f"Error: {exc}")
+        return 1
 
 if __name__ == "__main__":
-    serve_playground_app("xai_finance_agent:app", reload=True)
+    raise SystemExit(main())

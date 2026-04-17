@@ -1,5 +1,7 @@
 agno
-opena
+openai
 python-dotenv
 gradio
+yfinance
+ddgs
 

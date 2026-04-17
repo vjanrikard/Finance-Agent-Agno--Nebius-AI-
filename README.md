@@ -46,30 +46,39 @@ cd ai-projects-finance-agent
 pip install -r requirements.txt
 ```
 
-**2) Configure environment**
+**2) Store the API key outside the project**
 ```bash
-# Create environment file
-cp .env.example .env
-
-# Edit .env with your API key:
-NEBIUS_API_KEY=your_nebius_api_key_here
+# Windows PowerShell
+New-Item -ItemType Directory -Force "$HOME\OneDrive\Secrets"
+Set-Content -Path "$HOME\OneDrive\Secrets\NEBIUS_API_KEY.env" -Value "NEBIUS_API_KEY=your_nebius_api_key_here"
 ```
 
-**3) Run the agent**
-```bash
-python main.py
+The app loads the key from:
+
+```text
+C:\Users\<your-user>\OneDrive\Secrets\NEBIUS_API_KEY.env
 ```
 
-🌐 **Access**: Navigate to `http://localhost:8000` for the interactive web playground with live agent visualization.
+**3) Run the web app**
+```bash
+python app.py
+```
+
+🌐 **Access**: Open `http://127.0.0.1:7860` in your browser.
+
+**4) Optional: run from the terminal**
+```bash
+python main.py "What is the stock price of Apple?"
+```
 
 🧠 **How it works (financial intelligence)**
 
 **1. Query Understanding**: Advanced NLP processes complex financial questions and identifies required data types (prices, analysis, news)
 
 **2. Multi-Tool Orchestration**: Intelligent tool selection and execution:
-   - **Market Data Tools**: Real-time and historical price fetching
-   - **Analysis Tools**: Professional recommendation aggregation  
-   - **News Tools**: Relevant headline discovery and summarization
+- **Market Data Tools**: Real-time price fetching and fundamentals
+- **Analysis Tools**: Professional recommendation aggregation
+- **News Tools**: Relevant headline discovery and summarization
 
 **3. Data Integration**: Synthesizes information from multiple financial sources into coherent, actionable insights
 
@@ -181,17 +190,9 @@ DISPLAY_CONFIG = {
 
 🔧 **Tool integration & extensibility**
 
-**Market Data Sources**:
-- **Yahoo Finance**: Real-time quotes, historical data, company fundamentals
-- **Alpha Vantage**: Technical indicators, forex rates, commodity prices
-- **CoinGecko**: Cryptocurrency data, market cap rankings, DeFi metrics
-- **Financial Modeling Prep**: Professional financial statements, ratios
-
-**News & Analysis Providers**:
-- **DuckDuckGo News**: Unbiased headline aggregation
-- **Reuters/Bloomberg APIs**: Premium financial journalism
-- **SEC EDGAR**: Official company filings and regulatory documents
-- **Social Sentiment**: Twitter/Reddit market sentiment analysis
+**Included tools**:
+- **Yahoo Finance**: Stock prices, fundamentals, analyst recommendations
+- **DuckDuckGo**: Web and news search for recent market context
 
 **Custom Tool Development**:
 ```python

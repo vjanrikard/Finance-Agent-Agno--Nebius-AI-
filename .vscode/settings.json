@@ -1,0 +1,4 @@
+{
+    "python.terminal.useEnvFile": true,
+    "python.envFile": "C:\\Users\\vevan\\OneDrive\\Secrets\\NEBIUS_API_KEY.env"
+}

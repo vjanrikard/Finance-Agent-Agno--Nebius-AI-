@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.nebius import Nebius
@@ -6,8 +7,8 @@ from agno.tools.yfinance import YFinanceTools
 from agno.tools.duckduckgo import DuckDuckGoTools
 import gradio as gr
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from secure location outside project
+load_dotenv(Path.home() / "OneDrive" / "Secrets" / "NEBIUS_API_KEY.env")
 
 # Create the AI finance agent
 agent = Agent(
@@ -19,23 +20,23 @@ agent = Agent(
     tools=[
         DuckDuckGoTools(),
         YFinanceTools(
-            stock_price=True,
-            analyst_recommendations=True,
-            stock_fundamentals=True
+            enable_stock_price=True,
+            enable_analyst_recommendations=True,
+            enable_stock_fundamentals=True
         )
     ],
     instructions=[
         "Always use tables to display financial/numerical data.",
         "For text data use bullet points and small paragraphs."
     ],
-    show_tool_calls=True,
     markdown=True,
 )
 
 def respond(user_query: str) -> str:
     """Run the agent on the user's query and return markdown."""
     try:
-        return agent.run(user_query)
+        response = agent.run(user_query)
+        return response.content
     except Exception as e:
         return f"Error: {e}"
 
