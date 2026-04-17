@@ -9,10 +9,10 @@ import gradio as gr
 def load_nebius_env() -> None:
     env_file = os.getenv("NEBIUS_API_KEY.env_FILE") or os.getenv("NEBIUS_API_KEY_ENV_FILE")
     if env_file:
-        load_dotenv(env_file)
+        load_dotenv(env_file, override=True)
         return
 
-    load_dotenv()
+    load_dotenv(override=True)
 
 
 load_nebius_env()
@@ -42,15 +42,19 @@ agent = Agent(
 def respond(user_query: str) -> str:
     """Run the agent on the user's query and return markdown."""
     try:
-        return agent.run(user_query)
+        if not os.getenv("NEBIUS_API_KEY"):
+            return "Error: NEBIUS_API_KEY is not set. Set NEBIUS_API_KEY_ENV_FILE and restart app.py."
+
+        response = agent.run(user_query)
+        return str(response.content or "No response returned.")
     except Exception as e:
         return f"Error: {e}"
 
 # Build a Gradio interface
 interface = gr.Interface(
     fn=respond,
-    inputs=gr.components.Textbox(lines=2, placeholder="Ask a finance question..."),
-    outputs=gr.components.Markdown(),
+    inputs=gr.Textbox(lines=2, placeholder="Ask a finance question..."),
+    outputs=gr.Markdown(),
     title="Finance Agent",
     description="Ask questions about stocks, analyst recommendations, fundamentals and recent news."
 )
